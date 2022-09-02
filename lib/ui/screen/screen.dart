@@ -10,7 +10,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:month_picker_dialog_2/month_picker_dialog.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:trust_location/trust_location.dart';
 import 'package:video_player/video_player.dart';

@@ -25,7 +25,7 @@ dependencies:
   lint: ^1.7.2
   location_permissions: ^4.0.0
   material_design_icons_flutter: ^5.0.5955-rc.1
-  month_picker_dialog: ^0.4.0
+  month_picker_dialog_2: ^0.5.4+1
   onesignal_flutter: ^3.2.3
   path_provider: ^2.0.2
   permission_handler: ^8.2.0
