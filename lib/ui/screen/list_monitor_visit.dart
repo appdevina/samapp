@@ -134,7 +134,9 @@ class ListMonitorVisit extends GetView<ProfileController> {
             Container(
               width: MediaQuery.of(context).size.width * 0.6,
               child: Text(
-                (controller.role == 1)
+                (controller.role == 1 ||
+                        controller.role == 6 ||
+                        controller.role == 8)
                     ? "${controller.visitMonitor![index].user!.namaLengkap!} - ${controller.visitMonitor![index].user!.divisi!.name}"
                     : "${controller.visitMonitor![index].user!.namaLengkap!}",
                 style: blackFontStyle2.copyWith(

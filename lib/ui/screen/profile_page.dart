@@ -56,7 +56,9 @@ class ProfilePage extends StatelessWidget {
                                         },
                                         mdiIcons: MdiIcons.storefront,
                                       )
-                                    : (controller.role == 1)
+                                    : (controller.role == 1 ||
+                                            controller.role == 6 ||
+                                            controller.role == 8)
                                         ? MenuAccount(
                                             onpress: () {
                                               _bottomSheet(context);
@@ -77,7 +79,10 @@ class ProfilePage extends StatelessWidget {
                                             controller.visit!.length.toString(),
                                       )
                                     : SizedBox(),
-                                (controller.role == 1 || controller.role == 2)
+                                (controller.role == 1 ||
+                                        controller.role == 2 ||
+                                        controller.role == 6 ||
+                                        controller.role == 8)
                                     ? GetBuilder<ProfileController>(
                                         id: 'monitor',
                                         builder: (_) => MenuAccount(
