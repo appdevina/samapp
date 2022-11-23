@@ -97,4 +97,50 @@ class OutletServices {
       return ApiReturnValue(value: false, message: err.toString());
     }
   }
+
+  static Future<ApiReturnValue<bool>> updateOutletRealme(
+      String namaOutlet,
+      String namaPemilik,
+      String nomerPemilik,
+      String latlong,
+      List<File> images,
+      {http.MultipartRequest? client}) async {
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      String kodeOutlet = namaOutlet.split(' ').last;
+      String url = baseUrl + 'outlet';
+      Uri uri = Uri.parse(url);
+      if (client == null) {
+        client = http.MultipartRequest('POST', uri)
+          ..headers["Content-Type"] = "application/json"
+          ..headers["Authorization"] = "Bearer ${pref.getString('token')}"
+          ..fields['kode_outlet'] = kodeOutlet
+          ..fields['nama_pemilik_outlet'] = namaPemilik
+          ..fields['nomer_tlp_outlet'] = nomerPemilik
+          ..fields['latlong'] = latlong;
+      }
+
+      for (int i = 0; i < images.length; i++) {
+        String fileName = images[i].path.split('/').last;
+        var stream = new http.ByteStream(images[i].openRead());
+
+        var length = await images[i].length();
+
+        var multiPartImage = new http.MultipartFile('photo$i', stream, length,
+            filename: fileName);
+
+        client.files.add(multiPartImage);
+      }
+
+      var response = await client.send();
+
+      if (response.statusCode != 200) {
+        return ApiReturnValue(value: false, message: "Gagal Upload Foto");
+      }
+
+      return ApiReturnValue(value: true, message: "Berhasil Upload Foto");
+    } catch (err) {
+      return ApiReturnValue(value: false, message: err.toString());
+    }
+  }
 }

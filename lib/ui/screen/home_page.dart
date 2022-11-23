@@ -38,7 +38,8 @@ class HomePage extends StatelessWidget {
                                   ? '-'
                                   : (controller.user!.roles!.id == 3)
                                       ? "${controller.user!.divisi!.name!.toUpperCase()} - ${controller.user!.region!.name!.toUpperCase()} - ${controller.user!.cluster!.name!.toUpperCase()} - ${controller.user!.roles!.name!.toUpperCase()}"
-                                      : (controller.user!.roles!.id == 2)
+                                      : (controller.user!.roles!.id == 2 ||
+                                              controller.user!.roles!.id == 10)
                                           ? "${controller.user!.divisi!.name!.toUpperCase()} - ${controller.user!.region!.name!.toUpperCase()} - ${controller.user!.roles!.name!.toUpperCase()}"
                                           : "${controller.user!.roles!.name!.toUpperCase()}",
                               style: greyFontStyle.copyWith(
@@ -91,7 +92,8 @@ class HomePage extends StatelessWidget {
                                         child: Text("OK"),
                                       ));
                                 } else {
-                                  if (controller.user!.roles!.id == 1) {
+                                  if (controller.user!.roles!.id == 1 ||
+                                      controller.user!.roles!.id == 9) {
                                     Get.bottomSheet(
                                       GetBuilder<HomePageController>(
                                         id: 'dropdown',
@@ -136,7 +138,8 @@ class HomePage extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              if (controller.user!.roles!.id == 1) {
+                              if (controller.user!.roles!.id == 1 ||
+                                  controller.user!.roles!.id == 9) {
                                 Get.bottomSheet(
                                   GetBuilder<HomePageController>(
                                     id: 'dropdown',

@@ -529,7 +529,7 @@ class RegisterNooController extends GetxController {
     nomerWakilOutlet = TextEditingController();
     distric = TextEditingController();
     getCurrentPosition();
-    await getRole().then((value) async => (value == 1)
+    await getRole().then((value) async => (value == 1 || value == 9)
         ? await getBu().then((value) => badanUsaha = value)
         : (value == 2)
             ? await getCluster(role: value).then((value) => clus = value)

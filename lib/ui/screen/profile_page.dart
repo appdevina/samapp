@@ -24,7 +24,9 @@ class ProfilePage extends StatelessWidget {
                     id: 'tab',
                     builder: (cons) => CustomTabBar(
                       titles: [
-                        (controller.role == 2 || controller.role == 3)
+                        (controller.role == 2 ||
+                                controller.role == 3 ||
+                                controller.role == 10)
                             ? "OUTLET"
                             : "MENU",
                         "NOO"
@@ -45,7 +47,9 @@ class ProfilePage extends StatelessWidget {
                             id: 'outlet',
                             builder: (_) => Column(
                               children: [
-                                (controller.role == 2 || controller.role == 3)
+                                (controller.role == 2 ||
+                                        controller.role == 3 ||
+                                        controller.role == 10)
                                     ? MenuAccount(
                                         title: "Outlet Total",
                                         count: (con.outlets == null)
@@ -58,7 +62,8 @@ class ProfilePage extends StatelessWidget {
                                       )
                                     : (controller.role == 1 ||
                                             controller.role == 6 ||
-                                            controller.role == 8)
+                                            controller.role == 8 ||
+                                            controller.role == 9)
                                         ? MenuAccount(
                                             onpress: () {
                                               _bottomSheet(context);
@@ -70,7 +75,9 @@ class ProfilePage extends StatelessWidget {
                                         : Container(),
                                 (controller.role == 1 ||
                                         controller.role == 2 ||
-                                        controller.role == 3)
+                                        controller.role == 3 ||
+                                        controller.role == 9 ||
+                                        controller.role == 10)
                                     ? MenuAccount(
                                         title: "Visited Today",
                                         onpress: () {},
@@ -82,7 +89,9 @@ class ProfilePage extends StatelessWidget {
                                 (controller.role == 1 ||
                                         controller.role == 2 ||
                                         controller.role == 6 ||
-                                        controller.role == 8)
+                                        controller.role == 8 ||
+                                        controller.role == 9 ||
+                                        controller.role == 10)
                                     ? GetBuilder<ProfileController>(
                                         id: 'monitor',
                                         builder: (_) => MenuAccount(

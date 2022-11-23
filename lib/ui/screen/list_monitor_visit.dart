@@ -100,6 +100,48 @@ class ListMonitorVisit extends GetView<ProfileController> {
                             ],
                           ),
                         ),
+                        // Expanded(
+                        //   //width: double.infinity,
+                        //   child: DropdownSearch<String>(
+                        //   emptyBuilder: (context, message) => Center(
+                        //     child: Text("Tidak ada daftar"),
+                        //   ),
+                        //   showSearchBox: true,
+                        //   searchBoxStyle: blackFontStyle2,
+                        //   hint: "Cari Divisi....",
+                        //   items:
+                        //       controller.divisi!.map((e) => e.name!).toList(),
+                        //   popupItemBuilder: (_, item, __) => Container(
+                        //     padding: EdgeInsets.symmetric(
+                        //         horizontal: 20, vertical: 10),
+                        //     child: Text(
+                        //       item,
+                        //       style: blackFontStyle2,
+                        //       overflow: TextOverflow.ellipsis,
+                        //     ),
+                        //   ),
+                        //   onChanged: (String? value) async {
+                        //     if (value != null) {
+                        //       controller.selectedDivisi = null;
+                        //       controller.selectedRegion = null;
+                        //       controller.region = [];
+                        //       controller.selectedDivisi = value;
+                        //       await controller
+                        //           .getRegion(controller.selectedDivisi!)
+                        //           .then((value) => controller.region = value);
+
+                        //       controller.updateManual();
+                        //     }
+                        //   },
+                        //   searchBoxDecoration: InputDecoration(
+                        //     hintText: "Cari Divisi ...",
+                        //     border: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(10)),
+                        //     contentPadding: EdgeInsets.symmetric(
+                        //         horizontal: 10, vertical: 15),
+                        //   ),
+                        // ),
+                        // ),
                         Expanded(
                           child: Scrollbar(
                             interactive: true,
@@ -136,7 +178,8 @@ class ListMonitorVisit extends GetView<ProfileController> {
               child: Text(
                 (controller.role == 1 ||
                         controller.role == 6 ||
-                        controller.role == 8)
+                        controller.role == 8 ||
+                        controller.role == 9)
                     ? "${controller.visitMonitor![index].user!.namaLengkap!} - ${controller.visitMonitor![index].user!.divisi!.name}"
                     : "${controller.visitMonitor![index].user!.namaLengkap!}",
                 style: blackFontStyle2.copyWith(

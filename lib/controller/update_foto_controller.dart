@@ -1,12 +1,86 @@
 part of 'controllers.dart';
 
 class UpdateFotoOutletController extends GetxController {
-  File? video;
+  File? shopSign, depan, kanan, kiri, video;
   TextEditingController namaPemilikOutlet = TextEditingController();
   TextEditingController nomorPemilikOutlet = TextEditingController();
   final submitFormKey = GlobalKey<FormState>();
   VideoPlayerController? videoPlayerController;
   MediaInfo? compressedVideoInfo;
+
+  void deleteFoto(String namaFile) {
+    switch (namaFile) {
+      case 'fotodepan':
+        depan = null;
+        update(['fotodepan']);
+        break;
+      case 'fotokanan':
+        kanan = null;
+        update(['fotokanan']);
+        break;
+      case 'fotokiri':
+        kiri = null;
+        update(['fotokiri']);
+        break;
+      default:
+        shopSign = null;
+        update(['fotoshopsign']);
+    }
+    update(['butfoto']);
+  }
+
+  void getImage(String namaFile, ImageSource source) async {
+    Get.back();
+    Get.defaultDialog(
+        title: 'Tunggu ...',
+        middleText: 'sedang memproses foto',
+        actions: [
+          Column(
+            children: [
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+            ],
+          ),
+        ]);
+    final _picker = ImagePicker();
+
+    XFile? pickedFile = await _picker.pickImage(
+      source: source,
+    );
+
+    if (pickedFile != null) {
+      switch (namaFile) {
+        case 'fotodepan':
+          File convert = await convertImage(namaFile, pickedFile);
+          depan = convert;
+          update(['fotodepan']);
+          break;
+        case 'fotokanan':
+          File convert = await convertImage(namaFile, pickedFile);
+          kanan = convert;
+          update(['fotokanan']);
+          break;
+        case 'fotokiri':
+          File convert = await convertImage(namaFile, pickedFile);
+          kiri = convert;
+          update(['fotokiri']);
+          break;
+        default:
+          File convert = await convertImage(namaFile, pickedFile);
+          shopSign = convert;
+          update(['fotoshopsign']);
+      }
+      Get.back();
+      update(['butfoto']);
+    }
+    if (pickedFile == null) {
+      Get.back();
+    }
+  }
 
   Future<File> convertImage(String namaFile, XFile pickedFile) async {
     String _time = DateFormat('MMM-d-yyyy-kk-mm-ss').format(DateTime.now());
@@ -19,6 +93,52 @@ class UpdateFotoOutletController extends GetxController {
     var pureImg = new File("$path/$title.jpg")
       ..writeAsBytesSync(Img.encodeJpg(resizeImg));
     return pureImg;
+  }
+
+  void opsiMediaFoto(String namaFile) {
+    Get.defaultDialog(
+      title: 'Upload Foto',
+      titleStyle: blackFontStyle2,
+      middleText: 'Pilih media :',
+      middleTextStyle: blackFontStyle3,
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all("FF3F0A".toColor()),
+                  elevation: MaterialStateProperty.all(0)),
+              onPressed: () {
+                getImage(namaFile, ImageSource.gallery);
+              },
+              child: Text(
+                "Galeri",
+                style: blackFontStyle3.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all("FF3F0A".toColor()),
+                  elevation: MaterialStateProperty.all(0)),
+              onPressed: () {
+                getImage(namaFile, ImageSource.camera);
+              },
+              child: Text(
+                "Kamera",
+                style: blackFontStyle3.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        )
+      ],
+    );
   }
 
   void getVideo(BuildContext context) async {
@@ -128,6 +248,45 @@ class UpdateFotoOutletController extends GetxController {
         Get.back();
         return false;
       }
+    }
+  }
+
+  Future<bool> submitRealme(
+      String namaOutlet, String namaPemilik, String nomerPemilik) async {
+    String kodeOutlet = namaOutlet.split(' ').last;
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    String latlong = '${position.latitude},${position.longitude}';
+
+    if (submitFormKey.currentState!.validate()) {
+      if (shopSign == null || depan == null || kanan == null || kiri == null) {
+        notif("Registrasi OUTLET",
+            "Data belum lengkap silahkan cek pada bagian foto");
+      }
+    } else {
+      notif("Salah",
+          'Data belum lengkap pada kolom bertuliskan wajib isi, cek kembali dan lengkapi data');
+    }
+
+    List<File> images = [];
+    images.add(shopSign!);
+    images.add(depan!);
+    images.add(kanan!);
+    images.add(kiri!);
+    notifLoading('Tunggu', 'Sedang mengirim foto');
+
+    ApiReturnValue<bool> result = await OutletServices.updateOutletRealme(
+        kodeOutlet, namaPemilik, nomerPemilik, latlong, images);
+    if (result.value!) {
+      Get.back();
+      return true;
+    } else {
+      print(result.message);
+      notif("error", result.message!);
+      Get.back();
+      return false;
     }
   }
 

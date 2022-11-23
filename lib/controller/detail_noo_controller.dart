@@ -142,7 +142,7 @@ class DetailNooController extends GetxController {
       alasanText = TextEditingController();
       kodeOutlet = TextEditingController();
     }
-    if (role == 1) {
+    if (role == 1 || role == 9) {
       alasanText = TextEditingController();
     }
     update(['buttonar', 'buttontm']);
