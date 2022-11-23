@@ -9,7 +9,7 @@ class UpdateFotoOutlet extends StatelessWidget {
   Widget build(BuildContext context) {
     return GeneralPage(
       title: "Update Outlet",
-      subtitle: "Upload Foto",
+      subtitle: "Upload Video",
       onBackButtonPressed: () {
         Get.back();
       },

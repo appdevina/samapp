@@ -151,7 +151,7 @@ class DetailOutlet extends GetView<ProfileController> {
                   mainAxisAlignment: (outlet.latlong == null ||
                           outlet.video == null ||
                           outlet.potoShopSign == null)
-                      ? MainAxisAlignment.start
+                      ? MainAxisAlignment.spaceEvenly
                       : MainAxisAlignment.spaceAround,
                   children: (outlet.latlong == null)
                       ? [

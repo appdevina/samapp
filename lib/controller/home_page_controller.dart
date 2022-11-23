@@ -73,7 +73,7 @@ class HomePageController extends GetxController {
     getDetailUser();
     SharedPreferences pref = await SharedPreferences.getInstance();
     int? id = pref.getInt('role');
-    if (id != null && id == 1) {
+    if (id != null && id == 1 || id == 9) {
       await getdivisi().then((value) => divisi = value);
     }
     super.onInit();

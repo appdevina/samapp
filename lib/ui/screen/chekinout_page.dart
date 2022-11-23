@@ -157,7 +157,10 @@ class CheckInOutScreen extends StatelessWidget {
                                                 );
                                               } else {
                                                 controller.notifUpdateFoto(
-                                                    controller.selectedOutlet!);
+                                                    controller.selectedOutlet!,
+                                                    controller
+                                                            .outletDivisi ?? //ambil value default, ga yakin null/ngga, kalau null diisi string kosong
+                                                        '');
                                               }
                                             },
                                           );

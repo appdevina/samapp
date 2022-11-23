@@ -13,6 +13,7 @@ class CiCoController extends GetxController {
   var isplaned = false.obs;
   TextEditingController laporanVisit = TextEditingController();
   String? transaksi;
+  String? outletDivisi;
 
   List<String> yesNo = [
     'YES',
@@ -304,14 +305,74 @@ class CiCoController extends GetxController {
         await OutletServices.getSingleOutlet(outlet);
 
     if (result.value != null) {
-      if (result.value!.video == null) {
+      // outletDivisi = result.value!.divisi!.name;
+      // print(outletDivisi);
+      // print('cek video');
+      if (result.value!.divisi!.name == 'REALME' &&
+          (result.value!.potoDepan == null ||
+              result.value!.potoKanan == null ||
+              result.value!.potoKiri == null ||
+              result.value!.potoShopSign == null)) {
+        outletDivisi = result.value!.divisi!.name;
+        return false;
+      } else if (result.value!.divisi!.name == 'REALME' &&
+          result.value!.video == null) {
+        return true;
+      } else {
+        if (result.value!.divisi!.name != 'REALME' &&
+            result.value!.video == null) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  Future<void> getDivisi(String outlet) async {
+    ApiReturnValue<OutletModel> result =
+        await OutletServices.getSingleOutlet(outlet);
+
+    if (result.value != null) {
+      outletDivisi = result.value!.divisi!.name;
+      print(outletDivisi);
+      //return outletDivisi;
+    }
+  }
+
+  Future<bool> checkFotoRealme(String outlet) async {
+    ApiReturnValue<OutletModel> result =
+        await OutletServices.getSingleOutlet(outlet);
+    print('cek foto realme');
+    if (result.value != null) {
+      if (result.value!.potoShopSign == null ||
+          result.value!.potoDepan == null ||
+          result.value!.potoKanan == null ||
+          result.value!.potoKiri == null) {
         return false;
       }
     }
     return true;
   }
 
-  void notifUpdateFoto(String namaOutlet) {
+  void notifUpdateFoto(String namaOutlet, String divisiOutlet) {
+    Get.defaultDialog(
+      title: 'Info',
+      titleStyle: blackFontStyle1,
+      middleText:
+          'Outlet ini belum update \nSilahkan upload foto/video\ndan detail pemilik outlet\nkemudian lanjut Check In',
+      middleTextStyle: blackFontStyle3,
+      barrierDismissible: false,
+      onConfirm: () => divisiOutlet == 'REALME'
+          ? Get.to(() => UpdateFotoRealme(namaOutlet: namaOutlet))
+          : Get.to(() => UpdateFotoOutlet(
+                namaOutlet: namaOutlet,
+              )),
+      textConfirm: 'OK',
+      confirmTextColor: Colors.white,
+    );
+  }
+
+  void notifUpdateRealme(String namaOutlet) {
     Get.defaultDialog(
       title: 'Info',
       titleStyle: blackFontStyle1,
@@ -319,7 +380,7 @@ class CiCoController extends GetxController {
           'Outlet ini belum update foto\nSilahkan upload foto\ndan detail pemilik outlet\nkemudian lanjut Check In',
       middleTextStyle: blackFontStyle3,
       barrierDismissible: false,
-      onConfirm: () => Get.to(() => UpdateFotoOutlet(
+      onConfirm: () => Get.to(() => UpdateFotoRealme(
             namaOutlet: namaOutlet,
           )),
       textConfirm: 'OK',

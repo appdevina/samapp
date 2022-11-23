@@ -145,12 +145,12 @@ class ProfileController extends GetxController {
     load();
     SharedPreferences pref = await SharedPreferences.getInstance();
     int? id = pref.getInt('role');
-    if (id == 1 || id == 6 || id == 8) {
+    if (id == 1 || id == 6 || id == 8 || id == 9) {
       await getdivisi().then((value) => divisi = value);
     } else {
       getDataOutlet();
     }
-    if (id == 1 || id == 2 || id == 6 || id == 8) {
+    if (id == 1 || id == 2 || id == 6 || id == 8 || id == 9 || id == 10) {
       getMonitor(date: date);
     }
     super.onInit();
