@@ -37,7 +37,8 @@ class MainPage extends StatelessWidget {
                                 controller.role == 3 ||
                                 controller.role == 8 ||
                                 controller.role == 9 ||
-                                controller.role == 10)
+                                controller.role == 10 ||
+                                controller.role == 11)
                             ? HomePage()
                             : ArHomeScreen()),
                 ListNooPage(),

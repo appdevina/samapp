@@ -63,7 +63,8 @@ class ProfilePage extends StatelessWidget {
                                     : (controller.role == 1 ||
                                             controller.role == 6 ||
                                             controller.role == 8 ||
-                                            controller.role == 9)
+                                            controller.role == 9 ||
+                                            controller.role == 11)
                                         ? MenuAccount(
                                             onpress: () {
                                               _bottomSheet(context);
@@ -91,7 +92,8 @@ class ProfilePage extends StatelessWidget {
                                         controller.role == 6 ||
                                         controller.role == 8 ||
                                         controller.role == 9 ||
-                                        controller.role == 10)
+                                        controller.role == 10 ||
+                                        controller.role == 11)
                                     ? GetBuilder<ProfileController>(
                                         id: 'monitor',
                                         builder: (_) => MenuAccount(

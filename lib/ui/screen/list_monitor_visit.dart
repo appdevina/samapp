@@ -50,6 +50,7 @@ class ListMonitorVisit extends GetView<ProfileController> {
                                 DateFormat('dd MMMM yyyy')
                                     .format(controller.date),
                                 style: blackFontStyle1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -96,6 +97,7 @@ class ListMonitorVisit extends GetView<ProfileController> {
                                 DateFormat('dd MMMM yyyy')
                                     .format(controller.date),
                                 style: blackFontStyle1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),

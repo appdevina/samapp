@@ -145,12 +145,20 @@ class ProfileController extends GetxController {
     load();
     SharedPreferences pref = await SharedPreferences.getInstance();
     int? id = pref.getInt('role');
-    if (id == 1 || id == 6 || id == 8 || id == 9) {
+    // ROLE = ASM || COO || CSO || RKAM || CSOFEV
+    if (id == 1 || id == 6 || id == 8 || id == 9 || id == 11) {
       await getdivisi().then((value) => divisi = value);
     } else {
       getDataOutlet();
     }
-    if (id == 1 || id == 2 || id == 6 || id == 8 || id == 9 || id == 10) {
+    // ROLE = ASM || ASC || COO || CSO || RKAM || KAM  || CSOFEV
+    if (id == 1 ||
+        id == 2 ||
+        id == 6 ||
+        id == 8 ||
+        id == 9 ||
+        id == 10 ||
+        id == 11) {
       getMonitor(date: date);
     }
     super.onInit();
