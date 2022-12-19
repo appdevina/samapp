@@ -2,6 +2,7 @@ part of 'screen.dart';
 
 class RegisterNoo extends StatelessWidget {
   final controller = Get.put(RegisterNooController());
+  final userController = Get.find<HomePageController>();
 
   @override
   Widget build(BuildContext context) {
@@ -289,57 +290,63 @@ class RegisterNoo extends StatelessWidget {
                 height: defaultMargin,
               ),
               Divider(),
-              SizedBox(
-                height: defaultMargin,
-              ),
-              Container(
-                padding: EdgeInsets.only(left: defaultMargin),
-                child: Row(
-                  children: [
-                    Text("Promotor & FL", style: blackFontStyle2),
-                  ],
-                ),
-              ),
-              GetBuilder<RegisterNooController>(
-                id: 'dropdowndigit',
-                builder: (_) {
-                  return OpsiDigitWidget(
-                    validator: controller.validater,
-                    controller: controller,
-                    title1: 'OPPO*',
-                    text1: 'oppo',
-                    dropdownValue1: controller.oppo,
-                    title2: 'VIVO*',
-                    text2: 'vivo',
-                    dropdownValue2: controller.vivo,
-                    title3: 'XIAOMI*',
-                    text3: 'xiaomi',
-                    dropdownValue3: controller.xiaomi,
-                  );
-                },
-              ),
-              GetBuilder<RegisterNooController>(
-                id: 'dropdowndigit',
-                builder: (_) {
-                  return OpsiDigitWidget(
-                    validator: controller.validater,
-                    controller: controller,
-                    title1: 'REALME*',
-                    text1: 'realme',
-                    dropdownValue1: controller.realme,
-                    title2: 'SAMSUNG*',
-                    text2: 'infinix',
-                    dropdownValue2: controller.samsung,
-                    title3: 'FL*',
-                    text3: 'fl',
-                    dropdownValue3: controller.fl,
-                  );
-                },
-              ),
-              SizedBox(
-                height: defaultMargin,
-              ),
-              Divider(),
+              (userController.user?.divisi?.id == 7)
+                  ? SizedBox()
+                  : Column(
+                      children: [
+                        SizedBox(
+                          height: defaultMargin,
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(left: defaultMargin),
+                          child: Row(
+                            children: [
+                              Text("Promotor & FL", style: blackFontStyle2),
+                            ],
+                          ),
+                        ),
+                        GetBuilder<RegisterNooController>(
+                          id: 'dropdowndigit',
+                          builder: (_) {
+                            return OpsiDigitWidget(
+                              validator: controller.validater,
+                              controller: controller,
+                              title1: 'OPPO*',
+                              text1: 'oppo',
+                              dropdownValue1: controller.oppo,
+                              title2: 'VIVO*',
+                              text2: 'vivo',
+                              dropdownValue2: controller.vivo,
+                              title3: 'XIAOMI*',
+                              text3: 'xiaomi',
+                              dropdownValue3: controller.xiaomi,
+                            );
+                          },
+                        ),
+                        GetBuilder<RegisterNooController>(
+                          id: 'dropdowndigit',
+                          builder: (_) {
+                            return OpsiDigitWidget(
+                              validator: controller.validater,
+                              controller: controller,
+                              title1: 'REALME*',
+                              text1: 'realme',
+                              dropdownValue1: controller.realme,
+                              title2: 'SAMSUNG*',
+                              text2: 'infinix',
+                              dropdownValue2: controller.samsung,
+                              title3: 'FL*',
+                              text3: 'fl',
+                              dropdownValue3: controller.fl,
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: defaultMargin,
+                        ),
+                        Divider(),
+                      ],
+                    ),
               SizedBox(
                 height: defaultMargin,
               ),

@@ -2,6 +2,7 @@ part of 'screen.dart';
 
 class DetailNoo extends StatelessWidget {
   final controller = Get.put(DetailNooController());
+  final homeController = Get.find<HomePageController>();
   final NooModel data;
   final String title;
 
@@ -197,47 +198,54 @@ class DetailNoo extends StatelessWidget {
                 ),
               ],
             ),
-            Divider(),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      width: 100,
-                      child:
-                          Text("OPPO : ${data.oppo}", style: blackFontStyle3)),
-                  Container(
-                      width: 100,
-                      child:
-                          Text("VIVO : ${data.vivo}", style: blackFontStyle3)),
-                  Container(
-                      width: 100,
-                      child: Text("SAMSUNG : ${data.samsung}",
-                          style: blackFontStyle3)),
-                ],
-              ),
-            ),
-            Divider(),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      width: 100,
-                      child: Text("REALME : ${data.realme}",
-                          style: blackFontStyle3)),
-                  Container(
-                      width: 100,
-                      child: Text("XIAOMI : ${data.xiaomi}",
-                          style: blackFontStyle3)),
-                  Container(
-                      width: 100,
-                      child: Text("FL : ${data.fl}", style: blackFontStyle3)),
-                ],
-              ),
-            ),
+            (homeController.user?.divisi?.id == 7)
+                ? SizedBox()
+                : Column(
+                    children: [
+                      Divider(),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                                width: 100,
+                                child: Text("OPPO : ${data.oppo}",
+                                    style: blackFontStyle3)),
+                            Container(
+                                width: 100,
+                                child: Text("VIVO : ${data.vivo}",
+                                    style: blackFontStyle3)),
+                            Container(
+                                width: 100,
+                                child: Text("SAMSUNG : ${data.samsung}",
+                                    style: blackFontStyle3)),
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                                width: 100,
+                                child: Text("REALME : ${data.realme}",
+                                    style: blackFontStyle3)),
+                            Container(
+                                width: 100,
+                                child: Text("XIAOMI : ${data.xiaomi}",
+                                    style: blackFontStyle3)),
+                            Container(
+                                width: 100,
+                                child: Text("FL : ${data.fl}",
+                                    style: blackFontStyle3)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
             Divider(),
             GetBuilder<ListNooController>(
               id: 'timeline',
