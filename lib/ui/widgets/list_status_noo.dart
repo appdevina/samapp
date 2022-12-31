@@ -39,7 +39,7 @@ class ListStatusNoo extends GetView<ListNooController> {
                   style: blackFontStyle3,
                 ),
                 subtitle: Text(
-                    "${noos[i].region!.name!} || ${noos[i].namaPemilikOutlet!} || ${noos[i].nomerTlpOutlet!}"),
+                    "${noos[i].divisi!.name!} || ${noos[i].region!.name!} || ${noos[i].namaPemilikOutlet!} || ${noos[i].nomerTlpOutlet!}"),
               ),
             );
           },
