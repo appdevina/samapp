@@ -2,7 +2,7 @@ part of 'screen.dart';
 
 class DetailNoo extends StatelessWidget {
   final controller = Get.put(DetailNooController());
-  final homeController = Get.put(HomePageController());
+  final homeController = Get.find<HomePageController>();
   final NooModel data;
   final String title;
 

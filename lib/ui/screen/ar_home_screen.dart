@@ -1,7 +1,8 @@
 part of 'screen.dart';
 
 class ArHomeScreen extends StatelessWidget {
-  const ArHomeScreen({Key? key}) : super(key: key);
+  ArHomeScreen({Key? key}) : super(key: key);
+  final homeController = Get.put(HomePageController());
 
   @override
   Widget build(BuildContext context) {

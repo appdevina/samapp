@@ -32,13 +32,7 @@ class MainPage extends StatelessWidget {
                               child: CircularProgressIndicator(),
                             ),
                           )
-                        : (controller.role == 1 ||
-                                controller.role == 2 ||
-                                controller.role == 3 ||
-                                controller.role == 8 ||
-                                controller.role == 9 ||
-                                controller.role == 10 ||
-                                controller.role == 11)
+                        : (controller.role != 4)
                             ? HomePage()
                             : ArHomeScreen()),
                 ListNooPage(),
