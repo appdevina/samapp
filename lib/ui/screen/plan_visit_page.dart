@@ -5,6 +5,8 @@ class PlanVisitScreen extends StatelessWidget {
       ? Get.put(PlanVisitController())
       : Get.put(PlanVisitController(
           divisi: Get.arguments['divisi'], region: Get.arguments['region']));
+  final controller2 = Get.find<HomePageController>();
+
   @override
   Widget build(BuildContext context) {
     return GeneralPage(
@@ -55,13 +57,7 @@ class PlanVisitScreen extends StatelessWidget {
             ),
             GetBuilder<PlanVisitController>(
               id: 'button',
-              builder: (_) => controller.selectedMonth != '-' &&
-                      DateTime.now().isAfter(
-                        controller.selectedDateTime!.subtract(
-                          Duration(days: 5),
-                        ),
-                      ) &&
-                      DateTime.now().isBefore(controller.selectedDateTime!)
+              builder: (_) => controller.selectedMonth != '-'
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -148,14 +144,7 @@ class PlanVisitScreen extends StatelessWidget {
                   ),
                   GetBuilder<PlanVisitController>(
                       id: 'list',
-                      builder: (_) => controller.selectedMonth != '-' &&
-                              DateTime.now().isAfter(
-                                controller.selectedDateTime!.subtract(
-                                  Duration(days: 5),
-                                ),
-                              ) &&
-                              DateTime.now()
-                                  .isBefore(controller.selectedDateTime!)
+                      builder: (_) => controller.selectedMonth != '-'
                           ? Container(
                               width: 60,
                               child: Text("Hapus", style: blackFontStyle2),
@@ -167,71 +156,10 @@ class PlanVisitScreen extends StatelessWidget {
             Divider(),
             GetBuilder<PlanVisitController>(
               id: 'list',
-              builder: (_) => Container(
-                height: MediaQuery.of(context).size.height - 300,
-                child: ListView.separated(
-                  itemBuilder: (_, i) => (controller.plans.length > 0)
-                      ? ListTile(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(left: 5),
-                                width: 135,
-                                child: Text(
-                                  controller.plans[i],
-                                  style: blackFontStyle3.copyWith(fontSize: 14),
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.topLeft,
-                                width: 135,
-                                child: Text(
-                                  controller.showDate(
-                                    controller.plans[i],
-                                  ),
-                                ),
-                              ),
-                              controller.selectedMonth != '-' &&
-                                      DateTime.now().isAfter(
-                                        controller.selectedDateTime!.subtract(
-                                          Duration(days: 5),
-                                        ),
-                                      ) &&
-                                      DateTime.now().isBefore(
-                                          controller.selectedDateTime!)
-                                  ? Container(
-                                      width: 60,
-                                      child: IconButton(
-                                        onPressed: () {
-                                          controller.confirmDelete(
-                                            controller.plans[i],
-                                          );
-                                        },
-                                        icon: Icon(
-                                          MdiIcons.close,
-                                          color: Colors.red[400],
-                                        ),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                            ],
-                          ),
-                        )
-                      : ListTile(
-                          title: Center(
-                            child: Text(
-                              'Belum ada Data',
-                              style: blackFontStyle1,
-                            ),
-                          ),
-                        ),
-                  itemCount: controller.plans.length,
-                  separatorBuilder: (_, index) => Divider(
-                    height: 10,
-                  ),
-                ),
-              ),
+              builder: (_) => controller2.user?.divisi?.id == 4 ||
+                      controller.divisi == 'REALME'
+                  ? PlanVisitRealme()
+                  : PlanVisitNonRealme(),
             ),
           ],
         ),

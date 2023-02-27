@@ -42,3 +42,5 @@ part 'detail_foto_outlet.dart';
 part 'list_monitor_visit.dart';
 part 'lead_list_screen.dart';
 part 'update_foto_realme.dart';
+part 'plan_visit_nonrealme.dart';
+part 'plan_visit_realme.dart';

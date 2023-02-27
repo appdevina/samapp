@@ -8,6 +8,7 @@ class PlanVisitController extends GetxController {
   String? selectedOutlet;
   String? bulan;
   String? tahun;
+  int? idPlanVisit;
   DateTime? selectedDateTime;
   List<String> plans = [];
   List<String> allOutlet = [];
@@ -61,20 +62,14 @@ class PlanVisitController extends GetxController {
   void addPlan(String date) async {
     if (selectedOutlet != null) {
       String kodeOutlet = selectedOutlet!.split(' ').last;
-      ApiReturnValue result =
+      ApiReturnValue<bool> result =
           await PlanVisitServices.addPlanVisit(date, kodeOutlet);
-      if (result.value != null) {
-        if (result.value) {
-          notif(
-            'Berhasil',
-            "Menambahkan plan visit",
-          );
-        } else {
-          notif(
-            "Salah",
-            "ada tanggal sama!\nhanya di tambahkan untuk tanggal yang berbeda",
-          );
-        }
+      print(date);
+      if (result.value!) {
+        notif(
+          'Berhasil',
+          "Menambahkan plan visit",
+        );
       } else {
         notif(
           "Error",
@@ -140,7 +135,8 @@ class PlanVisitController extends GetxController {
     return tanggal.join(', ');
   }
 
-  void confirmDelete(String namaOutlet) {
+  void confirmDelete(String namaOutlet, bool isRealme,
+      {String idPlanVisit = ''}) {
     Get.defaultDialog(
         title: 'Delete :',
         middleText: 'Hapus plan visit outlet\n$namaOutlet ?',
@@ -152,7 +148,12 @@ class PlanVisitController extends GetxController {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  delete(namaOutlet, tahun!, bulan!);
+                  if (isRealme) {
+                    deleteRealme(namaOutlet, isRealme,
+                        idPlanVisit: idPlanVisit);
+                  } else {
+                    delete(namaOutlet, tahun!, bulan!);
+                  }
                   Get.back();
                 },
                 child: Text("YA"),
@@ -173,6 +174,24 @@ class PlanVisitController extends GetxController {
     print(kodeOutlet);
     ApiReturnValue<bool> result =
         await PlanVisitServices.deletePlanVisit(kodeOutlet, tahun, bulan);
+
+    if (result.value != null) {
+      if (result.value!) {
+        notif("Berhasil", result.message!);
+        Future.delayed(Duration(seconds: 1))
+            .then((_) => getPlanByMonth(tahun, bulan));
+      } else {
+        notif('Salah', result.message!);
+      }
+    }
+  }
+
+  void deleteRealme(String namaOutlet, bool isRealme,
+      {String idPlanVisit = ''}) async {
+    ApiReturnValue<bool> result = await PlanVisitServices.deletePlanVisitRealme(
+        namaOutlet, isRealme, idPlanVisit);
+    String tahun = DateTime.now().year.toString();
+    String bulan = DateTime.now().month.toString();
 
     if (result.value != null) {
       if (result.value!) {

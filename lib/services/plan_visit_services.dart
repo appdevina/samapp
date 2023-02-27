@@ -133,4 +133,35 @@ class PlanVisitServices {
       return ApiReturnValue(value: false, message: err.toString());
     }
   }
+
+  static Future<ApiReturnValue<bool>> deletePlanVisitRealme(
+      String id, bool isRealme, String idPlanVisit,
+      {http.Client? client}) async {
+    if (client == null) {
+      client = http.Client();
+    }
+
+    try {
+      String url = baseUrl + 'planvisitrealme';
+      Uri uri = Uri.parse(url);
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      var response = await client.delete(uri, headers: <String, String>{
+        'Application': "application/json",
+        'Authorization': "Bearer ${pref.getString('token')}",
+      }, body: <String, String>{
+        'id': idPlanVisit,
+      });
+
+      if (response.statusCode != 200) {
+        var data = jsonDecode(response.body);
+        String message = data['meta']['message'];
+        return ApiReturnValue(value: false, message: message);
+      }
+
+      return ApiReturnValue(value: true, message: 'Berhasil hapus plan visit');
+    } catch (err) {
+      return ApiReturnValue(value: false, message: err.toString());
+    }
+  }
 }

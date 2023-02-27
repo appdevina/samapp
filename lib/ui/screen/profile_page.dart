@@ -253,7 +253,7 @@ class ProfilePage extends StatelessWidget {
             ),
             SizedBox(height: 5),
             Text(
-              'V1.1.4',
+              'V1.1.7',
               style: greyFontStyle,
             )
           ],
