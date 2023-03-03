@@ -102,56 +102,35 @@ class PlanVisitServices {
   }
 
   static Future<ApiReturnValue<bool>> deletePlanVisit(
-      String kodeOutlet, String tahun, String bulan,
-      {http.Client? client}) async {
+      {required String kodeOutlet,
+      required bool isRealme,
+      String? tahun,
+      String? bulan,
+      String? idPlanVisit,
+      http.Client? client}) async {
     if (client == null) {
       client = http.Client();
     }
 
     try {
-      String url = baseUrl + 'planvisit';
+      String url = '$baseUrl${isRealme ? "planvisitrealme" : "planvisit"}';
       Uri uri = Uri.parse(url);
       SharedPreferences pref = await SharedPreferences.getInstance();
 
-      var response = await client.delete(uri, headers: <String, String>{
-        'Application': "application/json",
-        'Authorization': "Bearer ${pref.getString('token')}",
-      }, body: <String, String>{
-        'bulan': bulan,
-        'tahun': tahun,
-        'kode_outlet': kodeOutlet,
-      });
-
-      if (response.statusCode != 200) {
-        var data = jsonDecode(response.body);
-        String message = data['meta']['message'];
-        return ApiReturnValue(value: false, message: message);
-      }
-
-      return ApiReturnValue(value: true, message: 'Berhasil hapus plan visit');
-    } catch (err) {
-      return ApiReturnValue(value: false, message: err.toString());
-    }
-  }
-
-  static Future<ApiReturnValue<bool>> deletePlanVisitRealme(
-      String id, bool isRealme, String idPlanVisit,
-      {http.Client? client}) async {
-    if (client == null) {
-      client = http.Client();
-    }
-
-    try {
-      String url = baseUrl + 'planvisitrealme';
-      Uri uri = Uri.parse(url);
-      SharedPreferences pref = await SharedPreferences.getInstance();
-
-      var response = await client.delete(uri, headers: <String, String>{
-        'Application': "application/json",
-        'Authorization': "Bearer ${pref.getString('token')}",
-      }, body: <String, String>{
-        'id': idPlanVisit,
-      });
+      var response = await client.delete(uri,
+          headers: <String, String>{
+            'Application': "application/json",
+            'Authorization': "Bearer ${pref.getString('token')}",
+          },
+          body: isRealme
+              ? <String, dynamic>{
+                  'id': idPlanVisit,
+                }
+              : <String, dynamic>{
+                  'bulan': bulan,
+                  'tahun': tahun,
+                  'kode_outlet': kodeOutlet,
+                });
 
       if (response.statusCode != 200) {
         var data = jsonDecode(response.body);

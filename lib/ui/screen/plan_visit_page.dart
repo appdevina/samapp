@@ -157,7 +157,8 @@ class PlanVisitScreen extends StatelessWidget {
             GetBuilder<PlanVisitController>(
               id: 'list',
               builder: (_) => controller2.user?.divisi?.id == 4 ||
-                      controller.divisi == 'REALME'
+                      controller.divisi == 'REALME' ||
+                      Get.arguments?['divisi'] == 'REALME'
                   ? PlanVisitRealme()
                   : PlanVisitNonRealme(),
             ),

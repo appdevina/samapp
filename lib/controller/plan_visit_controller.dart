@@ -148,12 +148,10 @@ class PlanVisitController extends GetxController {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  if (isRealme) {
-                    deleteRealme(namaOutlet, isRealme,
-                        idPlanVisit: idPlanVisit);
-                  } else {
-                    delete(namaOutlet, tahun!, bulan!);
-                  }
+                  delete(
+                      namaOutlet: namaOutlet,
+                      isRealme: isRealme,
+                      idPlanVisit: idPlanVisit);
                   Get.back();
                 },
                 child: Text("YA"),
@@ -169,35 +167,28 @@ class PlanVisitController extends GetxController {
         ]);
   }
 
-  void delete(String namaOutlet, String tahun, String bulan) async {
+  void delete({
+    required String namaOutlet,
+    required bool isRealme,
+    String? tahunParam,
+    String? bulanParam,
+    String? idPlanVisit,
+  }) async {
     String kodeOutlet = namaOutlet.split(' ').last;
     print(kodeOutlet);
-    ApiReturnValue<bool> result =
-        await PlanVisitServices.deletePlanVisit(kodeOutlet, tahun, bulan);
+    ApiReturnValue<bool> result = await PlanVisitServices.deletePlanVisit(
+        kodeOutlet: kodeOutlet,
+        isRealme: isRealme,
+        tahun: tahun,
+        bulan: bulan,
+        idPlanVisit: idPlanVisit);
 
     if (result.value != null) {
       if (result.value!) {
         notif("Berhasil", result.message!);
-        Future.delayed(Duration(seconds: 1))
-            .then((_) => getPlanByMonth(tahun, bulan));
-      } else {
-        notif('Salah', result.message!);
-      }
-    }
-  }
-
-  void deleteRealme(String namaOutlet, bool isRealme,
-      {String idPlanVisit = ''}) async {
-    ApiReturnValue<bool> result = await PlanVisitServices.deletePlanVisitRealme(
-        namaOutlet, isRealme, idPlanVisit);
-    String tahun = DateTime.now().year.toString();
-    String bulan = DateTime.now().month.toString();
-
-    if (result.value != null) {
-      if (result.value!) {
-        notif("Berhasil", result.message!);
-        Future.delayed(Duration(seconds: 1))
-            .then((_) => getPlanByMonth(tahun, bulan));
+        Future.delayed(Duration(seconds: 1)).then((_) => getPlanByMonth(
+            tahun ?? '${DateTime.now().year}',
+            bulan ?? '${DateTime.now().month}'));
       } else {
         notif('Salah', result.message!);
       }

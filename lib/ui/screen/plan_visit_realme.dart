@@ -22,7 +22,7 @@ class PlanVisitRealme extends StatelessWidget {
                       padding: EdgeInsets.only(left: 5),
                       width: 135,
                       child: Text(
-                        controller.planVisit[i].outlet!.namaOutlet.toString(),
+                        '${controller.planVisit[i].outlet!.namaOutlet} (${controller.planVisit[i].outlet!.distric}) ${controller.planVisit[i].outlet!.kodeOutlet}',
                         style: blackFontStyle3.copyWith(fontSize: 14),
                       ),
                     ),
@@ -40,8 +40,7 @@ class PlanVisitRealme extends StatelessWidget {
                             child: IconButton(
                               onPressed: () {
                                 controller.confirmDelete(
-                                  controller.planVisit[i].outlet!.namaOutlet
-                                      .toString(),
+                                  '${controller.planVisit[i].outlet!.namaOutlet} ${controller.planVisit[i].outlet!.distric} ${controller.planVisit[i].outlet!.kodeOutlet}',
                                   true,
                                   idPlanVisit:
                                       controller.planVisit[i].id.toString(),
