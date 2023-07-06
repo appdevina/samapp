@@ -11,6 +11,7 @@ class CiCoController extends GetxController {
   List<PlanVisitModel> planVisit = [];
   List<String> showList = [];
   var isplaned = false.obs;
+  var isnoo = false.obs;
   TextEditingController laporanVisit = TextEditingController();
   String? transaksi;
   String? outletDivisi;
@@ -43,14 +44,14 @@ class CiCoController extends GetxController {
   //function di halaman awal cico
   Future<void> getPlan() async {
     ApiReturnValue<List<PlanVisitModel>> result =
-        await PlanVisitServices.getPlanVisit();
+        await PlanVisitServices.getPlanVisit(isNoo: isnoo.value);
 
     if (result.value != null) {
       planVisit = result.value!;
       List<String> namaOutlet = planVisit
           .map(
             (e) =>
-                "${e.outlet!.namaOutlet} (${e.outlet!.distric}) ${e.outlet!.kodeOutlet}",
+                "${e.outlet!.namaOutlet} (${e.outlet!.distric}) ${isnoo.value ? e.outlet!.id : e.outlet!.kodeOutlet}",
           )
           .toList();
       showList = namaOutlet;
@@ -78,44 +79,69 @@ class CiCoController extends GetxController {
 
     double lat = position.latitude;
     double long = position.longitude;
-    ApiReturnValue<OutletModel> result =
-        await OutletServices.getSingleOutlet(namaOutlet);
 
-    if (result.value != null) {
-      List<String> latlong = result.value!.latlong!.split(',').toList();
-      for (int i = 0; i < latlong.length; i++) {
-        if (i == 0) {
-          latOutlet = double.parse(latlong[i]);
-        } else {
-          longOutlet = double.parse(latlong[i]);
+    if (isnoo.value || int.tryParse(namaOutlet) != null) {
+      ApiReturnValue<NooModel> result =
+          await OutletServices.getSingleOutletNoo(namaOutlet);
+      if (result.value != null) {
+        List<String> latlong = result.value!.latlong!.split(',').toList();
+        for (int i = 0; i < latlong.length; i++) {
+          if (i == 0) {
+            latOutlet = double.parse(latlong[i]);
+          } else {
+            longOutlet = double.parse(latlong[i]);
+          }
         }
+        radius = 0;
+        outletId = result.value!.id!;
+      } else {
+        return false;
       }
-      radius = result.value!.radius!.toDouble();
-      outletId = result.value!.id!;
-
-      double isInRadius =
-          Geolocator.distanceBetween(latOutlet!, longOutlet!, lat, long);
-
-      if (checkin && radius != 0) {
-        if (isInRadius > radius!) {
-          notif("Salah", "Anda berada di luar radius outlet ini");
-          return false;
-        }
-      }
-
-      getCurrentPosition(lat, long);
-      update();
-      return true;
     } else {
-      return false;
+      ApiReturnValue<OutletModel> result =
+          await OutletServices.getSingleOutlet(namaOutlet);
+      if (result.value != null) {
+        List<String> latlong = result.value!.latlong!.split(',').toList();
+        for (int i = 0; i < latlong.length; i++) {
+          if (i == 0) {
+            latOutlet = double.parse(latlong[i]);
+          } else {
+            longOutlet = double.parse(latlong[i]);
+          }
+        }
+        radius = result.value!.radius!.toDouble();
+        outletId = result.value!.id!;
+      } else {
+        return false;
+      }
     }
+
+    double isInRadius =
+        Geolocator.distanceBetween(latOutlet!, longOutlet!, lat, long);
+
+    if (checkin && radius != 0) {
+      if (isInRadius > radius!) {
+        notif("Salah", "Anda berada di luar radius outlet ini");
+        return false;
+      }
+    }
+
+    getCurrentPosition(lat, long);
+    update();
+    return true;
   }
 
   Future<void> getVisit() async {
-    ApiReturnValue<List<VisitModel>> result = await VisitServices.getVisit();
+    ApiReturnValue<List<VisitModel>> result =
+        await VisitServices.getVisit(isnoo: true);
+    ApiReturnValue<List<VisitModel>> result2 =
+        await VisitServices.getVisit(isnoo: false);
 
-    if (result.value != null) {
-      visits = result.value!;
+    log('RESULT 1 ${result.value} - RESULT 2 ${result2.value}');
+    if (result.value != null && result2.value != null) {
+      final value = [...result.value!, ...result2.value!];
+      value.sort(((a, b) => b.checkInTime!.compareTo(a.checkInTime!)));
+      visits = value;
     }
 
     update(['logvisit']);
@@ -154,10 +180,50 @@ class CiCoController extends GetxController {
     update(['dropdown']);
   }
 
+  void extraCallNoo() async {
+    if (isnoo.value) {
+      Get.defaultDialog(
+          contentPadding: EdgeInsets.all(defaultMargin),
+          barrierDismissible: false,
+          title: "Loading ....",
+          titleStyle: blackFontStyle1,
+          middleText: 'Mengambil data Outlet',
+          actions: [
+            Center(
+              child: CircularProgressIndicator(),
+            )
+          ]);
+      ApiReturnValue<List<NooModel>> result =
+          await NooService.getNooOutlet(divisi: divisi, region: region);
+      if (result.value != null) {
+        List<String> outletName = result.value!
+            .map(
+              (e) => "${e.namaOutlet} (${e.distric}) ${e.id}",
+            )
+            .toList();
+        Set setPlan = Set.from(showList);
+        Set setOutlet = Set.from(outletName);
+
+        List<String> data = List.from(setOutlet.difference(setPlan));
+        showList = data;
+      }
+
+      Get.back();
+    }
+    update(['dropdown']);
+  }
+
   void changeListPlaned() {
     selectedOutlet = null;
     isplaned.toggle();
     update(['extracall']);
+  }
+
+  //TOGGLE NOO
+  void changeListNooPlaned() {
+    selectedOutlet = null;
+    isnoo.toggle();
+    update(['noo']);
   }
 
   void newSelected(String val) {
@@ -259,6 +325,7 @@ class CiCoController extends GetxController {
     String tipeVisit, {
     String? laporan,
     String? transaksi,
+    String? kodeOutlet,
   }) async {
     if (!checkin && laporan == '') {
       notif("Salah", "Laporan kunjungan harus di lampirkan");
@@ -269,6 +336,8 @@ class CiCoController extends GetxController {
       notif("Salah", "Harus pilih transaksi");
       return false;
     }
+
+    log(selectedOutlet.toString());
 
     Get.defaultDialog(
         contentPadding: EdgeInsets.all(defaultMargin),
@@ -291,7 +360,9 @@ class CiCoController extends GetxController {
         checkin,
         tipeVisit,
         laporan: laporan,
-        transaksi: transaksi);
+        transaksi: transaksi,
+        isnoo:
+            (isnoo.value && checkin) || int.tryParse(kodeOutlet ?? '') != null);
     if (result.value!) {
       return true;
     } else {
@@ -301,8 +372,13 @@ class CiCoController extends GetxController {
   }
 
   Future<bool> checkFoto(String outlet) async {
-    ApiReturnValue<OutletModel> result =
-        await OutletServices.getSingleOutlet(outlet);
+    ApiReturnValue<dynamic> result;
+
+    if (isnoo.value) {
+      result = await OutletServices.getSingleOutletNoo(outlet);
+    } else {
+      result = await OutletServices.getSingleOutlet(outlet);
+    }
 
     if (result.value != null) {
       // outletDivisi = result.value!.divisi!.name;

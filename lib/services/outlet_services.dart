@@ -40,7 +40,8 @@ class OutletServices {
       }
       String kodeOutlet = namaOutlet.split(' ').last;
 
-      String url = baseUrl + 'outlet/$kodeOutlet';
+      String url = '${baseUrl}outlet/$kodeOutlet';
+
       Uri uri = Uri.parse(url);
       SharedPreferences pref = await SharedPreferences.getInstance();
 
@@ -58,6 +59,39 @@ class OutletServices {
       var data = jsonDecode(response.body);
 
       OutletModel value = OutletModel.fromJson(data['data'][0]);
+      return ApiReturnValue(value: value);
+    } catch ($err) {
+      return ApiReturnValue(message: $err.toString());
+    }
+  }
+
+  static Future<ApiReturnValue<NooModel>> getSingleOutletNoo(String namaOutlet,
+      {http.Client? client}) async {
+    try {
+      if (client == null) {
+        client = http.Client();
+      }
+      String kodeOutlet = namaOutlet.split(' ').last;
+
+      String url = '${baseUrl}noo/$kodeOutlet';
+
+      Uri uri = Uri.parse(url);
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      var response = await http.get(uri, headers: {
+        'Content-Type': "application/json",
+        'Authorization': "Bearer ${pref.getString('token')}",
+      });
+
+      if (response.statusCode != 200) {
+        var data = jsonDecode(response.body);
+        String message = data['message'];
+        return ApiReturnValue(message: message);
+      }
+
+      var data = jsonDecode(response.body);
+
+      NooModel value = NooModel.fromJson(data['data'][0]);
       return ApiReturnValue(value: value);
     } catch ($err) {
       return ApiReturnValue(message: $err.toString());

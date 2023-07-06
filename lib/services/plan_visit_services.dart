@@ -10,13 +10,14 @@ class PlanVisitServices {
   }
 
   static Future<ApiReturnValue<List<PlanVisitModel>>> getPlanVisit(
-      {http.Client? client}) async {
+      {http.Client? client, required bool isNoo}) async {
     if (client == null) {
       client = http.Client();
     }
     String tanggal = getDate(tanggal: true);
 
-    String url = baseUrl + 'planvisit/?tanggal=$tanggal';
+    String url =
+        '${baseUrl}planvisit/?tanggal=$tanggal${isNoo ? '&isnoo=1' : ''}';
     Uri uri = Uri.parse(url);
     SharedPreferences pref = await SharedPreferences.getInstance();
 
@@ -40,12 +41,13 @@ class PlanVisitServices {
 
   static Future<ApiReturnValue<List<PlanVisitModel>>> getPlanbyMonth(
       String tahun, String bulan,
-      {http.Client? client}) async {
+      {http.Client? client, required bool isNoo}) async {
     if (client == null) {
       client = http.Client();
     }
 
-    String url = baseUrl + 'planvisit/filter/?tahun=$tahun&bulan=$bulan';
+    String url =
+        '${baseUrl}planvisit/filter/?tahun=$tahun&bulan=$bulan${isNoo ? '&isnoo=1' : ''}';
     Uri uri = Uri.parse(url);
     SharedPreferences pref = await SharedPreferences.getInstance();
 
@@ -66,20 +68,24 @@ class PlanVisitServices {
         .map((e) => PlanVisitModel.fromJson(e))
         .toList();
 
+    log(value.toString());
+
     return ApiReturnValue(value: value);
   }
 
   static Future<ApiReturnValue<bool>> addPlanVisit(
       String date, String kodeOutlet,
-      {http.Client? client}) async {
+      {http.Client? client, required bool isNoo}) async {
     try {
       if (client == null) {
         client = http.Client();
       }
 
-      String url = baseUrl + 'planvisit';
+      String url = '${baseUrl}planvisit${isNoo ? '?isnoo=1' : ''}';
       Uri uri = Uri.parse(url);
       SharedPreferences pref = await SharedPreferences.getInstance();
+
+      log(url);
 
       var response = await client.post(uri, body: {
         'tanggal_visit': date,
@@ -104,6 +110,7 @@ class PlanVisitServices {
   static Future<ApiReturnValue<bool>> deletePlanVisit(
       {required String kodeOutlet,
       required bool isRealme,
+      required bool isnoo,
       String? tahun,
       String? bulan,
       String? idPlanVisit,
@@ -113,7 +120,10 @@ class PlanVisitServices {
     }
 
     try {
-      String url = '$baseUrl${isRealme ? "planvisitrealme" : "planvisit"}';
+      String url = isnoo
+          ? '$baseUrl${isRealme ? "planvisitrealme" : "planvisitnoo"}'
+          : '$baseUrl${isRealme ? "planvisitrealme" : "planvisit"}';
+      log(url.toString());
       Uri uri = Uri.parse(url);
       SharedPreferences pref = await SharedPreferences.getInstance();
 
@@ -132,6 +142,9 @@ class PlanVisitServices {
                   'kode_outlet': kodeOutlet,
                 });
 
+      log(response.statusCode.toString());
+      log(response.body.toString());
+
       if (response.statusCode != 200) {
         var data = jsonDecode(response.body);
         String message = data['meta']['message'];
@@ -140,6 +153,7 @@ class PlanVisitServices {
 
       return ApiReturnValue(value: true, message: 'Berhasil hapus plan visit');
     } catch (err) {
+      log(err.toString());
       return ApiReturnValue(value: false, message: err.toString());
     }
   }

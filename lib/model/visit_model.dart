@@ -62,7 +62,7 @@ class VisitModel extends Equatable {
         tanggalVisit:
             DateTime.fromMillisecondsSinceEpoch(json["tanggal_visit"]),
         userId: json["user_id"],
-        outletId: json["outlet_id"],
+        outletId: json["outlet_id"] ?? json["noo_id"],
         tipeVisit: json["tipe_visit"],
         latlongIn: json["latlong_in"],
         latlongOut: json["latlong_out"],

@@ -18,6 +18,49 @@ class PlanVisitScreen extends StatelessWidget {
       child: Container(
         child: Column(
           children: [
+            controller2.user?.divisi?.name == 'ORAIMO' ||
+                    controller.divisi == 'ORAIMO'
+                ? SizedBox(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Noo/Lead ?",
+                          style: blackFontStyle3,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: GetBuilder<PlanVisitController>(
+                            id: 'noo',
+                            builder: (con) {
+                              return Switch(
+                                value: con.isnoo.value,
+                                onChanged: (value) async {
+                                  Get.defaultDialog(
+                                      contentPadding:
+                                          EdgeInsets.all(defaultMargin),
+                                      barrierDismissible: false,
+                                      title: "Loading ....",
+                                      titleStyle: blackFontStyle1,
+                                      middleText: 'Mengambil data Outlet',
+                                      actions: [
+                                        Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      ]);
+                                  con.changeListNoo();
+                                  await con
+                                      .getOutlet()
+                                      .then((value) => Get.back());
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                : SizedBox(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

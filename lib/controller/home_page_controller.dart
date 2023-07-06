@@ -13,7 +13,7 @@ class HomePageController extends GetxController {
 
   Future<void> getPlanVisit() async {
     ApiReturnValue<List<PlanVisitModel>> result =
-        await PlanVisitServices.getPlanVisit();
+        await PlanVisitServices.getPlanVisit(isNoo: false);
 
     if (result.value != null) {
       listPlan = result.value!;

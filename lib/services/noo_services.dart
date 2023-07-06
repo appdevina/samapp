@@ -423,4 +423,34 @@ class NooService {
       return ApiReturnValue(value: false, message: e.toString());
     }
   }
+
+  static Future<ApiReturnValue<List<NooModel>>> getNooOutlet(
+      {http.Client? client, String? divisi, String? region}) async {
+    try {
+      client ??= http.Client();
+
+      String url = baseUrl + 'nooOutlet';
+      Uri uri = Uri.parse(url);
+
+      SharedPreferences pref = await SharedPreferences.getInstance();
+
+      var response = await client.get(uri, headers: {
+        'Content-Type': "application/json",
+        'Authorization': "Bearer ${pref.getString('token')}",
+      });
+
+      log(response.statusCode.toString());
+
+      if (response.statusCode != 200) {
+        return ApiReturnValue(message: 'Please reload the App');
+      }
+
+      var data = jsonDecode(response.body);
+      List<NooModel> outlets =
+          (data['data'] as Iterable).map((e) => NooModel.fromJson(e)).toList();
+      return ApiReturnValue(value: outlets);
+    } catch (err) {
+      return ApiReturnValue(message: err.toString());
+    }
+  }
 }

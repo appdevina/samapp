@@ -57,12 +57,15 @@ class ProfileController extends GetxController {
   }
 
   Future<void> getVisited() async {
-    ApiReturnValue<List<VisitModel>> result = await VisitServices.getVisit();
+    ApiReturnValue<List<VisitModel>> result =
+        await VisitServices.getVisit(isnoo: true);
+    ApiReturnValue<List<VisitModel>> result2 =
+        await VisitServices.getVisit(isnoo: false);
 
-    if (result.value != null) {
-      visit = result.value!;
-      update(['outlet']);
+    if (result.value != null && result2.value != null) {
+      visit = [...result.value!, ...result2.value!];
     }
+    update(['outlet']);
   }
 
   Future<void> load() async {
@@ -125,9 +128,14 @@ class ProfileController extends GetxController {
   }
 
   Future<void> getMonitor({required DateTime date}) async {
+    //bikin 2 isnoo di hardcode kaya getVisit() di ci_co_controller
     ApiReturnValue<List<VisitModel>> result =
-        await VisitServices.getMonitorVisit(date: date);
+        await VisitServices.getMonitorVisit(
+      date: date,
+    );
 
+    //dibikin value terus value.sort
+    //result.value nya di sort
     if (result.value != null) {
       visitMonitor = result.value!;
       update(['monitor']);

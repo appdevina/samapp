@@ -37,9 +37,7 @@ class PlanVisitNonRealme extends StatelessWidget {
                             child: IconButton(
                               onPressed: () {
                                 controller.confirmDelete(
-                                  controller.plans[i],
-                                  false,
-                                );
+                                    controller.plans[i], false);
                               },
                               icon: Icon(
                                 MdiIcons.close,

@@ -5,6 +5,8 @@ class CheckInOutScreen extends StatelessWidget {
       ? Get.put(CiCoController())
       : Get.put(CiCoController(
           divisi: Get.arguments['divisi'], region: Get.arguments['region']));
+  final homeController = Get.find<HomePageController>();
+
   @override
   Widget build(BuildContext context) {
     return GeneralPage(
@@ -25,28 +27,66 @@ class CheckInOutScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Extra Call ?",
-                        style: blackFontStyle3,
+                      homeController.user?.divisi?.name == 'ORAIMO' ||
+                              controller.divisi == 'ORAIMO'
+                          ? SizedBox(
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Noo/Lead ?",
+                                    style: blackFontStyle3,
+                                  ),
+                                  GetBuilder<CiCoController>(
+                                    id: 'noo',
+                                    builder: (con) {
+                                      return Switch(
+                                        value: con.isnoo.value,
+                                        onChanged: (value) {
+                                          con.changeListNooPlaned();
+                                          if (value && con.isplaned.value) {
+                                            //Kondisi ketika noo on dan extra call on
+                                            //ngambil dari table noo
+                                            con.extraCallNoo();
+                                          } else {
+                                            //ngambil dari table planvisit outlet
+                                            controller.getPlan();
+                                          }
+                                        },
+                                      );
+                                    },
+                                  )
+                                ],
+                              ),
+                            )
+                          : SizedBox(),
+                      SizedBox(
+                        child: Row(
+                          children: [
+                            Text(
+                              "Extra Call ?",
+                              style: blackFontStyle3,
+                            ),
+                            GetBuilder<CiCoController>(
+                              id: 'extracall',
+                              builder: (con) {
+                                return Switch(
+                                  value: con.isplaned.value,
+                                  onChanged: (value) {
+                                    con.changeListPlaned();
+                                    if (value) {
+                                      con.extraCall();
+                                    } else {
+                                      controller.getPlan();
+                                    }
+                                  },
+                                );
+                              },
+                            )
+                          ],
+                        ),
                       ),
-                      GetBuilder<CiCoController>(
-                        id: 'extracall',
-                        builder: (con) {
-                          return Switch(
-                            value: con.isplaned.value,
-                            onChanged: (value) {
-                              con.changeListPlaned();
-                              if (value) {
-                                con.extraCall();
-                              } else {
-                                controller.getPlan();
-                              }
-                            },
-                          );
-                        },
-                      )
                     ],
                   ),
                   SizedBox(
@@ -74,6 +114,7 @@ class CheckInOutScreen extends StatelessWidget {
                                 child: Text("Tidak ada daftar outlet plan"),
                               ),
                               showSearchBox: true,
+                              selectedItem: controller.selectedOutlet,
                               searchBoxStyle: blackFontStyle2,
                               hint: "Cari Outlet....",
                               popupItemBuilder: (_, item, __) => Container(

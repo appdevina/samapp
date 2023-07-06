@@ -10,9 +10,10 @@ class VisitServices {
     http.MultipartRequest? request,
     String? laporan,
     String? transaksi,
+    required bool isnoo,
   }) async {
     try {
-      String url = baseUrl + 'visit';
+      String url = '${baseUrl}${isnoo ? 'visitNoo' : 'visit'}';
       Uri uri = Uri.parse(url);
       SharedPreferences pref = await SharedPreferences.getInstance();
       if (request == null) {
@@ -55,26 +56,31 @@ class VisitServices {
 
   static Future<ApiReturnValue<List<VisitModel>>> getVisit({
     http.Client? client,
+    required bool isnoo,
   }) async {
     if (client == null) {
       client = http.Client();
     }
 
     try {
-      String url = baseUrl + 'visit';
+      String url = '${baseUrl}visit?isnoo=${isnoo ? 1 : ''}';
       Uri uri = Uri.parse(url);
       SharedPreferences pref = await SharedPreferences.getInstance();
+
+      print(url);
 
       var response = await client.get(uri, headers: {
         'Content-Type': "application/json",
         'Authorization': "Bearer ${pref.getString('token')}",
       });
+
       if (response.statusCode != 200) {
         var data = jsonDecode(response.body);
         String message = data['message'];
         return ApiReturnValue(message: message);
       }
 
+      log('${isnoo} ${response.body}');
       var data = jsonDecode(response.body);
 
       List<VisitModel> value = (data['data'] as Iterable)
@@ -83,6 +89,7 @@ class VisitServices {
 
       return ApiReturnValue(value: value);
     } catch ($err) {
+      log($err.toString());
       return ApiReturnValue(message: $err.toString());
     }
   }
@@ -119,8 +126,10 @@ class VisitServices {
     }
   }
 
-  static Future<ApiReturnValue<List<VisitModel>>> getMonitorVisit(
-      {http.Client? client, required DateTime date}) async {
+  static Future<ApiReturnValue<List<VisitModel>>> getMonitorVisit({
+    http.Client? client,
+    required DateTime date,
+  }) async {
     try {
       if (client == null) {
         client = http.Client();
@@ -128,6 +137,7 @@ class VisitServices {
 
       String url = baseUrl +
           "visit/monitor?date=${DateFormat('yyyy-MM-dd').format(date)}";
+      //bikin 2 isnoo di hardcode kaya getVisit() di ci_co_controller
       Uri uri = Uri.parse(url);
 
       SharedPreferences pref = await SharedPreferences.getInstance();

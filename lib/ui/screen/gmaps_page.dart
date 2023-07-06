@@ -12,6 +12,7 @@ class GmapsScreen extends GetView<CiCoController> {
 
   @override
   Widget build(BuildContext context) {
+    print(kodeCsa);
     return GeneralPage(
       title: "Live Visit",
       subtitle: title,
@@ -200,6 +201,7 @@ class GmapsScreen extends GetView<CiCoController> {
                               tipeVisit!,
                               laporan: controller.laporanVisit.text,
                               transaksi: controller.transaksi,
+                              kodeOutlet: kodeCsa,
                             )
                               .then((value) {
                               if (value) {

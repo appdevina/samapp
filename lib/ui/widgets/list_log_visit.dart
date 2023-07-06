@@ -34,7 +34,10 @@ class ListLogVisit extends GetView<CiCoController> {
                         }
 
                         controller
-                            .getLatlong(data![index].outlet!.kodeOutlet!, false)
+                            .getLatlong(
+                                data![index].outlet!.kodeOutlet ??
+                                    data![index].outlet!.id.toString(),
+                                false)
                             .then(
                               (value) => (value)
                                   ? Get.to(() => GmapsScreen(
@@ -42,8 +45,10 @@ class ListLogVisit extends GetView<CiCoController> {
                                         tipeVisit: (controller.isplaned.value)
                                             ? 'EXTRACALL'
                                             : 'PLANNED',
-                                        kodeCsa:
-                                            data![index].outlet!.kodeOutlet,
+                                        kodeCsa: data![index]
+                                                .outlet!
+                                                .kodeOutlet ??
+                                            data![index].outlet!.id.toString(),
                                       ))
                                   : print("object"),
                             );
@@ -51,7 +56,7 @@ class ListLogVisit extends GetView<CiCoController> {
                     )
                   : null,
               title: Text(
-                "${data![index].outlet!.namaOutlet} ${data![index].outlet!.kodeOutlet}",
+                "${data![index].outlet!.namaOutlet} ${data![index].outlet!.kodeOutlet ?? data![index].outlet!.id}",
                 style: blackFontStyle2,
               ),
               subtitle: Text(

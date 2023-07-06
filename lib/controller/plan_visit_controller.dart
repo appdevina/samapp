@@ -13,6 +13,9 @@ class PlanVisitController extends GetxController {
   List<String> plans = [];
   List<String> allOutlet = [];
   List<PlanVisitModel> planVisit = [];
+  var isnoo = false.obs;
+  bool isinit = false;
+  //final homeController = Get.find<HomePageController>();
 
   String? validater(String? value) {
     if (value!.isEmpty) {
@@ -62,9 +65,11 @@ class PlanVisitController extends GetxController {
   void addPlan(String date) async {
     if (selectedOutlet != null) {
       String kodeOutlet = selectedOutlet!.split(' ').last;
-      ApiReturnValue<bool> result =
-          await PlanVisitServices.addPlanVisit(date, kodeOutlet);
+      ApiReturnValue<bool> result = await PlanVisitServices.addPlanVisit(
+          date, kodeOutlet,
+          isNoo: isnoo.value);
       print(date);
+      print(kodeOutlet);
       if (result.value!) {
         notif(
           'Berhasil',
@@ -90,32 +95,57 @@ class PlanVisitController extends GetxController {
     update(['tanggal', 'list', 'button']);
   }
 
-  void getOutlet() async {
+  Future<void> getOutlet() async {
     print('proses');
-    ApiReturnValue<List<OutletModel>> result =
-        await OutletServices.getOutlet(divisi: divisi, region: region);
+    if (isnoo.value) {
+      ApiReturnValue<List<NooModel>> result =
+          await NooService.getNooOutlet(divisi: divisi, region: region);
 
-    if (result.value != null) {
-      allOutlet = result.value!
-          .map((e) => "${e.namaOutlet} (${e.distric}) ${e.kodeOutlet}")
-          .toList();
-      update(['dropdown']);
+      if (result.value != null) {
+        allOutlet = result.value!
+            .map((e) => "${e.namaOutlet} (${e.distric}) ${e.id}")
+            .toList();
+      }
+    } else {
+      ApiReturnValue<List<OutletModel>> result =
+          await OutletServices.getOutlet(divisi: divisi, region: region);
+
+      if (result.value != null) {
+        allOutlet = result.value!
+            .map((e) => "${e.namaOutlet} (${e.distric}) ${e.kodeOutlet}")
+            .toList();
+      }
     }
+    update(['dropdown']);
   }
 
   void getPlanByMonth(String tahun, String bulan) async {
     ApiReturnValue<List<PlanVisitModel>> plan =
-        await PlanVisitServices.getPlanbyMonth(tahun, bulan);
+        await PlanVisitServices.getPlanbyMonth(tahun, bulan,
+            isNoo: isnoo.value);
 
-    if (plan.value != null) {
-      planVisit = plan.value!;
-      plans = plan.value!
-          .map((e) =>
-              "${e.outlet!.namaOutlet} (${e.outlet!.distric}) ${e.outlet!.kodeOutlet}")
-          .toSet()
-          .toList();
-      plans.sort();
-      update(['list']);
+    if (isnoo.value) {
+      if (plan.value != null) {
+        planVisit = plan.value!;
+        plans = plan.value!
+            .map((e) =>
+                "${e.outlet!.namaOutlet} (${e.outlet!.distric}) ${e.outlet!.id}")
+            .toSet()
+            .toList();
+        plans.sort();
+        update(['list']);
+      }
+    } else {
+      if (plan.value != null) {
+        planVisit = plan.value!;
+        plans = plan.value!
+            .map((e) =>
+                "${e.outlet!.namaOutlet} (${e.outlet!.distric}) ${e.outlet!.kodeOutlet}")
+            .toSet()
+            .toList();
+        plans.sort();
+        update(['list']);
+      }
     }
   }
 
@@ -127,9 +157,16 @@ class PlanVisitController extends GetxController {
   String showDate(String outlet) {
     List<String> tanggal = [];
     for (var plan in planVisit) {
-      if ("${plan.outlet!.namaOutlet} (${plan.outlet!.distric}) ${plan.outlet!.kodeOutlet}" ==
-          outlet) {
-        tanggal.add(DateFormat('d').format(plan.tanggalVisit!));
+      if (isnoo.value) {
+        if ("${plan.outlet!.namaOutlet} (${plan.outlet!.distric}) ${plan.outlet!.id}" ==
+            outlet) {
+          tanggal.add(DateFormat('d').format(plan.tanggalVisit!));
+        }
+      } else {
+        if ("${plan.outlet!.namaOutlet} (${plan.outlet!.distric}) ${plan.outlet!.kodeOutlet}" ==
+            outlet) {
+          tanggal.add(DateFormat('d').format(plan.tanggalVisit!));
+        }
       }
     }
     return tanggal.join(', ');
@@ -149,9 +186,10 @@ class PlanVisitController extends GetxController {
               ElevatedButton(
                 onPressed: () {
                   delete(
-                      namaOutlet: namaOutlet,
-                      isRealme: isRealme,
-                      idPlanVisit: idPlanVisit);
+                    namaOutlet: namaOutlet,
+                    isRealme: isRealme,
+                    idPlanVisit: idPlanVisit,
+                  );
                   Get.back();
                 },
                 child: Text("YA"),
@@ -179,6 +217,7 @@ class PlanVisitController extends GetxController {
     ApiReturnValue<bool> result = await PlanVisitServices.deletePlanVisit(
         kodeOutlet: kodeOutlet,
         isRealme: isRealme,
+        isnoo: int.tryParse(kodeOutlet) != null,
         tahun: tahun,
         bulan: bulan,
         idPlanVisit: idPlanVisit);
@@ -197,8 +236,9 @@ class PlanVisitController extends GetxController {
 
   @override
   void onInit() {
-    getOutlet();
     super.onInit();
+    getOutlet();
+    isinit = true;
   }
 
   void notif(String judul, String pesan) {
@@ -210,5 +250,11 @@ class PlanVisitController extends GetxController {
         messageText:
             Text(pesan, style: blackFontStyle2.copyWith(color: Colors.white)),
         backgroundColor: "FF3F0A".toColor());
+  }
+
+  void changeListNoo() {
+    selectedOutlet = null;
+    isnoo.toggle();
+    update(['noo']);
   }
 }

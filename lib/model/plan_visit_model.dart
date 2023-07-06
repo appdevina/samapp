@@ -4,11 +4,13 @@ class PlanVisitModel extends Equatable {
   final int? id;
   final DateTime? tanggalVisit;
   final OutletModel? outlet;
+  final NooModel? nooOutlet;
 
   PlanVisitModel({
     this.id,
     this.tanggalVisit,
     this.outlet,
+    this.nooOutlet,
   });
 
   PlanVisitModel copyWith({
@@ -16,11 +18,13 @@ class PlanVisitModel extends Equatable {
     DateTime? tanggalVisit,
     UserModel? user,
     OutletModel? outlet,
+    NooModel? nooModel,
   }) {
     return PlanVisitModel(
       id: id ?? this.id,
       tanggalVisit: tanggalVisit ?? this.tanggalVisit,
       outlet: outlet ?? this.outlet,
+      nooOutlet: nooOutlet ?? this.nooOutlet,
     );
   }
 
@@ -29,12 +33,18 @@ class PlanVisitModel extends Equatable {
         id,
         tanggalVisit,
         outlet,
+        nooOutlet,
       ];
 
   factory PlanVisitModel.fromJson(Map<String, dynamic> json) => PlanVisitModel(
         id: json["id"],
         tanggalVisit:
             DateTime.fromMillisecondsSinceEpoch(json['tanggal_visit']),
-        outlet: OutletModel.fromJson(json["outlet"]),
+        outlet: json["outlet"] != null
+            ? OutletModel.fromJson(json["outlet"])
+            : null,
+        nooOutlet: json["nooOutlet"] != null
+            ? NooModel.fromJson(json["nooOutlet"])
+            : null,
       );
 }
